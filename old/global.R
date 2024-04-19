@@ -22,9 +22,8 @@ library(DT, verbose = FALSE) # for renderDataTable
 # if environmental variable is not set, use relative path
 datapath <- Sys.getenv("IDEP_DATABASE")[1]
 if (nchar(datapath) == 0) {
-  datapath <- "\\\\d1prprsh3ccifs/home/lym_myl_rsch/qcai1/007_RNAseq_github/shinygo/idep/data/data104b/" # "../../data/data104b/"
+  datapath <- "../../data/data104b/"
 }
-#\\d1prprsh3ccifs\home\lym_myl_rsch\qcai1\007_RNAseq_github\shinygo\idep\data\data104b
 #datapath <- "c:/work/IDEP_data/data104b/"
 STRING_DB_VERSION <- "11.5" # what version of STRINGdb needs to be used
 Min_overlap <- 1
@@ -197,17 +196,14 @@ sqlite <- dbDriver("SQLite")
 convert <- dbConnect(sqlite, paste0(datapath, "convertIDs.db"), flags = SQLITE_RO) # read only mode
 # keggSpeciesID = read.csv(paste0(datapath,"data_go/KEGG_Species_ID.csv"))
 # List of GMT files in /gmt sub folder
-gmtFiles <- list.files(path = paste0(datapath, "pathwayDB"), pattern = "_gene_ensembl.db") #".*\\.db"
+gmtFiles <- list.files(path = paste0(datapath, "pathwayDB"), pattern = ".*\\.db")
 gmtFiles <- paste(datapath, "pathwayDB/", gmtFiles, sep = "")
-
-
-
 geneInfoFiles <- list.files(path = paste0(datapath, "geneInfo"), pattern = ".*GeneInfo\\.csv")
 geneInfoFiles <- paste(datapath, "geneInfo/", geneInfoFiles, sep = "")
 motifFiles <- list.files(path = paste0(datapath, "motif"), pattern = ".*\\.db")
 motifFiles <- paste(datapath, "motif/", motifFiles, sep = "")
 
-STRING10_species <- read.csv(paste0(datapath, "data_go/STRING10_species.csv"))
+STRING10_species <- read.csv(paste0(datapath, "data_go/STRING11_species.csv"))
 
 # Create a list for Select Input options
 orgInfo <- dbGetQuery(convert, paste("select distinct * from orgInfo "))

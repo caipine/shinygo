@@ -91,7 +91,7 @@ server <- function(input, output, session) {
 
     convertID(input$input_text, input$selectOrg)
   })
-  
+
 
   geneInfoLookup <- reactive({
     if (input$goButton == 0) {

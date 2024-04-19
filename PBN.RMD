@@ -1,0 +1,74 @@
+---
+title: "Untitled"
+author: "+ Qingsong Cai"
+date: "2024-04-17"
+output: html_document
+---
+
+```{r}
+dir()
+
+bobp <- read.csv("PBN_UP_top_enrichment_go_biological_process.csv")
+cums <- read.csv("PBN_UP_top_enrichment_Curated.MSigDB.csv")
+
+con <- rbind(bobp[1:9,], cums[3,])
+
+con[order(con$Fold.Enrichment, decreasing = T), ]
+```
+```{r}
+
+   # tem <- tem$x
+tem <- con[order(con$Fold.Enrichment, decreasing = T), ]
+    colnames(tem) <- c("adj.Pval", "nGenesList", "nGenesCategor", "Fold", "Pathways", "URL", "Genes")
+    tem$Pathways <- gsub(".*'_blank'>|</a>", "", tem$Pathways) # remove URL
+    tem$Direction <- "Diff"
+    tem
+    
+    
+enrichmentPlot(tem)
+```
+
+
+
+
+```{r, fig.width=6, fig.height=4}
+library(stringr)
+goTable <- con[order(con$Fold.Enrichment, decreasing = T), ]
+goTable$Pathway <- str_split_fixed( goTable$Pathway, " ",2)[,2]
+goTable$Pathway[goTable$Pathway %in% "ES 1"] <-  tolower( "EMBRYONIC STEM CELL")
+goTable <- goTable[order(goTable$Fold.Enrichment, decreasing = F),]
+goTable$Pathway <- factor(goTable$Pathway, levels = goTable$Pathway)
+goTable$FDR <- goTable$Enrichment.FDR
+goTable$`N. of Genes` <- goTable$nGenes
+goTable$`Fold Enrichment` <- goTable$Fold.Enrichment
+ggplot(goTable, aes(x = `Fold Enrichment`, y = Pathway                                    , color = -log10(FDR) )) +
+  geom_point(aes(size = `N. of Genes`))  + 
+  geom_segment(aes(x = 0, xend = `Fold Enrichment`, y = Pathway, yend = Pathway )) + scale_color_continuous(
+          low =  "blue", #input$SortPathwaysPlotLowColor,
+          high = "red", # input$SortPathwaysPlotHighColor,
+          #name = names(columns)[columns == colorBy],
+          guide = guide_colorbar(reverse = TRUE)
+        ) +  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) + theme(axis.title.y = element_blank())
+```
+
+```{r, fig.width=6, fig.height=4}
+goTable <- read.csv("PBN_DN_top_enrichment_go_biological_process.csv")
+goTable$Pathway <- str_split_fixed( goTable$Pathway, " ",2)[,2]
+
+goTable <- goTable[order(goTable$Fold.Enrichment, decreasing = F),]
+goTable$Pathway <- factor(goTable$Pathway, levels = goTable$Pathway)
+goTable$FDR <- goTable$Enrichment.FDR
+goTable$`N. of Genes` <- goTable$nGenes
+goTable$`Fold Enrichment` <- goTable$Fold.Enrichment
+ggplot(goTable, aes(x = `Fold Enrichment`, y = Pathway                                    , color = -log10(FDR) )) +
+  geom_point(aes(size = `N. of Genes`))  + 
+  geom_segment(aes(x = 0, xend = `Fold Enrichment`, y = Pathway, yend = Pathway )) + scale_color_continuous(
+          low =  "blue", #input$SortPathwaysPlotLowColor,
+          high = "red", # input$SortPathwaysPlotHighColor,
+          #name = names(columns)[columns == colorBy],
+          guide = guide_colorbar(reverse = TRUE)
+        ) +  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) + theme(axis.title.y = element_blank())
+```
+
+
+
